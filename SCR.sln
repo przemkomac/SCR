@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "SCR\WebApp.csproj", "{D33A17E9-8E18-48FF-8675-B23CA3F03802}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic", "Logic\BusinessLogic.csproj", "{B49E3D38-9263-4B7E-B231-6591A9D45DB1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic", "BusinessLogic\BusinessLogic.csproj", "{B49E3D38-9263-4B7E-B231-6591A9D45DB1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{F8AB7684-4224-40B1-9C79-02D8FC74B4D2}"
 EndProject

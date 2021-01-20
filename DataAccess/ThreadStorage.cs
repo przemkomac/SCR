@@ -6,13 +6,75 @@ namespace DataAccess
 {
     public static class ThreadStorage
     {
-        public static List<BaseThread> PriorityThreads = new List<BaseThread>();
+        private static object _lockerThreads;
+        private static object _lockerLogs;
 
-        public static KeyValuePair<DateTime, string> Logs = new KeyValuePair<DateTime, string>();
+        private static List<BaseThread> _priorityThreads;
+        private static List<KeyValuePair<DateTime, string>> _logs;
+
+        static ThreadStorage()
+        {
+            _lockerThreads = new object();
+            _lockerLogs = new object();
+
+            _priorityThreads = new List<BaseThread>();
+            _logs = new List<KeyValuePair<DateTime, string>>();
+        }
 
         public static void ClearThreads()
         {
-            PriorityThreads = new List<BaseThread>();
+            lock (_lockerThreads)
+            {
+                _priorityThreads = new List<BaseThread>();
+            }
+        }
+
+        public static void ClearLogs()
+        {
+            lock (_lockerLogs)
+            {
+                _logs = new List<KeyValuePair<DateTime, string>>();
+            }
+        }
+
+        public static void AddThread(BaseThread thread)
+        {
+            lock (_lockerThreads)
+            {
+                _priorityThreads.Add(thread);
+            }
+        }
+
+        public static List<BaseThread> GetThreads()
+        {
+            List<BaseThread> tempList;
+
+            lock (_lockerThreads)
+            {
+                tempList = new List<BaseThread>(_priorityThreads);
+            }
+
+            return tempList;
+        }
+
+        public static void AddLog(string log)
+        {
+            lock (_lockerLogs)
+            {
+                _logs.Add(new KeyValuePair<DateTime, string>(DateTime.Now, log));
+            }
+        }
+
+        public static List<KeyValuePair<DateTime, string>> GetLogs()
+        {
+            List<KeyValuePair<DateTime, string>> tempList;
+
+            lock (_lockerLogs)
+            {
+                tempList = new List<KeyValuePair<DateTime, string>>(_logs);
+            }
+
+            return tempList;
         }
     }
 }
