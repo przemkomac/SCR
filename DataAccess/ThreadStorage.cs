@@ -1,6 +1,8 @@
-﻿using DataAccess.Models;
+﻿using DataAccess.Enums;
+using DataAccess.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DataAccess
 {
@@ -41,6 +43,8 @@ namespace DataAccess
         {
             lock (_lockerThreads)
             {
+                thread.Inserted = DateTime.Now;
+                thread.ThreadStatus = EThreadStatus.Added;
                 _priorityThreads.Add(thread);
             }
         }
@@ -55,6 +59,25 @@ namespace DataAccess
             }
 
             return tempList;
+        }
+
+        public static void FinishThread(Guid threadId)
+        {
+            lock (_lockerThreads)
+            {
+                var toRemove = _priorityThreads.First(t => t.Id == threadId);
+                toRemove.ThreadStatus = EThreadStatus.Finished;
+                toRemove.Finished = DateTime.Now;
+            }
+        }
+
+        public static void RunThread(Guid threadId)
+        {
+            lock (_lockerThreads)
+            {
+                var toRemove = _priorityThreads.First(t => t.Id == threadId);
+                toRemove.ThreadStatus = EThreadStatus.Added;
+            }
         }
 
         public static void AddLog(string log)

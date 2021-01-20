@@ -2,6 +2,7 @@
 using DataAccess;
 using DataAccess.Models;
 using System;
+using System.Threading;
 
 namespace Logic
 {
@@ -46,6 +47,7 @@ namespace Logic
             {
                 GenerateNext();
                 generateCount--;
+                Thread.Sleep(_random.Next(_generationIntervalFrom, _generationIntervalTo) * 1000);
             }
         }
 
