@@ -6,7 +6,7 @@ namespace Logic.Schedulers
 {
     public class DmsScheduler : BaseSchedule<DeadlineThread>
     {
-        public override DeadlineThread GetNextThread(List<BaseThread> threads)
+        public override DeadlineThread GetNextThread(List<DeadlineThread> threads)
         {
             throw new System.NotImplementedException();
         }

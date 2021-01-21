@@ -1,4 +1,13 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿function formatDate(dateStr) {
+    var date = new Date(dateStr);
 
-// Write your JavaScript code.
+    var dateStr =
+        ("00" + (date.getMonth() + 1)).slice(-2) + "/" +
+        ("00" + date.getDate()).slice(-2) + "/" +
+        date.getFullYear() + " " +
+        ("00" + date.getHours()).slice(-2) + ":" +
+        ("00" + date.getMinutes()).slice(-2) + ":" +
+        ("00" + date.getSeconds()).slice(-2);
+
+    return dateStr;
+}

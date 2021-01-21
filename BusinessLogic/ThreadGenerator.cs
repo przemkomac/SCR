@@ -43,12 +43,16 @@ namespace Logic
             ThreadStorage.ClearThreads();
             ThreadStorage.ClearLogs();
 
+            ThreadStorage.AddLog($"Generator rozpoczął pracę.");
+
             while (generateCount > 0)
             {
                 GenerateNext();
                 generateCount--;
                 Thread.Sleep(_random.Next(_generationIntervalFrom, _generationIntervalTo) * 1000);
             }
+
+            ThreadStorage.AddLog($"Generator zakończył pracę.");
         }
 
         private void GenerateNext()
@@ -63,6 +67,7 @@ namespace Logic
                 };
 
                 ThreadStorage.AddThread(thread);
+                ThreadStorage.AddLog($"Dodano zadanie o ID {thread.Id}, złożoności {thread.Cost} s. i priorytecie {thread.Priority}.");
             }
             else
             {
@@ -74,6 +79,7 @@ namespace Logic
                 };
 
                 ThreadStorage.AddThread(thread);
+                ThreadStorage.AddLog($"Dodano zadanie o ID {thread.Id}, złożoności {thread.Cost} s. i deadline {thread.Deadline}.");
             }
         }
     }

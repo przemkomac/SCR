@@ -76,7 +76,7 @@ namespace DataAccess
             lock (_lockerThreads)
             {
                 var toRemove = _priorityThreads.First(t => t.Id == threadId);
-                toRemove.ThreadStatus = EThreadStatus.Added;
+                toRemove.ThreadStatus = EThreadStatus.Running;
             }
         }
 

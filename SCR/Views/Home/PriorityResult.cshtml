@@ -1,0 +1,106 @@
+﻿@model WebApp.Models.PriorityViewModel
+
+@{
+    ViewData["Title"] = "Scheduler - algorytm priorytetowy";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr />
+
+<div class="col-md-12">
+    <div class="col-md-12">
+        <h2>Podsumowanie</h2>
+        <div class="form-group">
+            <label asp-for="GenerateCount" class="control-label"></label>
+            <a> > @Model.GenerateCount</a>
+        </div>
+        <div class="form-group">
+            <label asp-for="GenerationIntervalFrom" class="control-label"></label>
+            <a> > @Model.GenerationIntervalFrom</a>
+        </div>
+        <div class="form-group">
+            <label asp-for="GenerationIntervalTo" class="control-label"></label>
+            <a> > @Model.GenerationIntervalTo</a>
+        </div>
+        <div class="form-group">
+            <label asp-for="CostFrom" class="control-label"></label>
+            <a> > @Model.CostFrom</a>
+        </div>
+        <div class="form-group">
+            <label asp-for="CostTo" class="control-label"></label>
+            <a> > @Model.CostTo</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div style="width: 50%" id="chart-container">
+            <h2>Wykres</h2>
+
+            <ul class="list-group">
+                <li class="list-group-item">Waiting for data...</li>
+            </ul>
+        </div>
+
+        <div style="width: 50%" id="logs-container">
+            <h2>Logi</h2>
+
+            <ul class="list-group">
+                <li class="list-group-item">Waiting for data...</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    setInterval(refreshLogsContainer, 1000);
+    setInterval(refreshChartContainer, 1000);
+
+    function refreshLogsContainer() {
+        $.ajax({
+            type: "GET",
+            url: "/Home/Logs",
+            success: function (response) {
+
+                $("#logs-container ul").empty();
+
+                $.each(response, function (index, value) {
+                    $("#logs-container ul").append('<li class="list-group-item">' + formatDate(value.key) + ': ' + value.value + '</li>');
+                });
+            }
+        });
+    }
+
+    function refreshChartContainer() {
+        $.ajax({
+            type: "GET",
+            url: "/Home/Threads",
+            success: function (response) {
+
+                $("#chart-container ul").empty();
+
+                $.each(response, function (index, value) {
+                    var status = '';
+                    if (value.threadStatus == 1) {
+                        status = 'Dodany';
+                    }
+                    else if (value.threadStatus == 2) {
+                        status = 'Wykonywany';
+                    }
+                    else if (value.threadStatus == 3) {
+                        status = 'Zakończony';
+                    }
+
+                    $("#chart-container ul").append(
+                        '<li class="list-group-item">' +
+                        'Id: ' + value.id +
+                        '<br />Dodany: ' + formatDate(value.inserted) +
+                        '<br />Wykonany: ' + value.finished +
+                        '<br />Koszt: ' + value.cost +
+                        '<br />Status: ' + status +
+                        '</li>');
+                });
+            }
+        });
+    }
+</script>

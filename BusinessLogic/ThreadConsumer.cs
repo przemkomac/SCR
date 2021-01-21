@@ -4,6 +4,7 @@ using DataAccess;
 using DataAccess.Models;
 using Logic.Schedulers;
 using System;
+using System.Linq;
 using System.Threading;
 
 namespace Logic
@@ -29,13 +30,18 @@ namespace Logic
 
         public void Start(int consumeCount)
         {
+            ThreadStorage.AddLog($"Konsumer uruchomi się za {START_DELAY_SECONDS} s.");
             Thread.Sleep(START_DELAY_SECONDS * 1000);
+
+            ThreadStorage.AddLog($"Konsumer rozpoczął pracę.");
 
             while (consumeCount > 0)
             {
                 ConsumeNext();
                 consumeCount--;
             }
+
+            ThreadStorage.AddLog($"Konsumer zakończył pracę.");
         }
 
         private void ConsumeNext()
@@ -48,19 +54,19 @@ namespace Logic
             {
                 case EScheduleType.Priority:
                     {
-                        nextThread = _priorityScheduler.GetNextThread(threads);
+                        nextThread = _priorityScheduler.GetNextThread(threads.Cast<PriorityThread>().ToList());
                         break;
                     }
 
                 case EScheduleType.Dms:
                     {
-                        nextThread = _dmsScheduler.GetNextThread(threads);
+                        nextThread = _dmsScheduler.GetNextThread(threads.Cast<DeadlineThread>().ToList());
                         break;
                     }
 
                 case EScheduleType.Edf:
                     {
-                        nextThread = _edfScheduler.GetNextThread(threads);
+                        nextThread = _edfScheduler.GetNextThread(threads.Cast<DeadlineThread>().ToList());
                         break;
                     }
 
@@ -69,8 +75,10 @@ namespace Logic
             }
 
             ThreadStorage.RunThread(nextThread.Id);
+            ThreadStorage.AddLog($"Uruchomiono zadanie o ID {nextThread.Id}, wykonywanie potrwa {nextThread.Cost} s.");
             Thread.Sleep(nextThread.Cost * 1000);
             ThreadStorage.FinishThread(nextThread.Id);
+            ThreadStorage.AddLog($"Wykonano zadanie o ID {nextThread.Id}.");
         }
     }
 }
