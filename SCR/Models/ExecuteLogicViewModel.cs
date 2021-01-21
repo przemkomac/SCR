@@ -2,18 +2,8 @@
 
 namespace WebApp.Models
 {
-    public class PriorityViewModel
+    public class ExecuteLogicViewModel
     {
-        public PriorityViewModel()
-        {
-            // default values
-            GenerateCount = 5;
-            GenerationIntervalFrom = 2;
-            GenerationIntervalTo = 4;
-            CostFrom = 3;
-            CostTo = 6;
-        }
-
         [DisplayName("Ile wygenerować")]
         public int GenerateCount { get; set; }
 

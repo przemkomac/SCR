@@ -1,7 +1,7 @@
 ﻿@model WebApp.Models.ExecuteLogicViewModel
 
 @{
-    ViewData["Title"] = "Scheduler - algorytm priorytetowy";
+    ViewData["Title"] = "Scheduler - algorytm EDF";
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -37,7 +37,7 @@
         <div style="width: 50%" id="chart-container">
             <h2>Wykres</h2>
 
-            <input type="hidden" id="thread-type" value="@((int)BusinessLogic.Enums.EScheduleType.Priority)" />
+            <input type="hidden" id="thread-type" value="@((int)BusinessLogic.Enums.EScheduleType.Edf)" />
 
             <ul class="list-group">
                 <li class="list-group-item">Oczekiwanie na dane...</li>
