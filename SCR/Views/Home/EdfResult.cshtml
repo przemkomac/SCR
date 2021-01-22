@@ -34,7 +34,7 @@
     </div>
 
     <div class="row">
-        <div style="width: 50%" id="chart-container">
+        <div style="width: 50%" id="thread-container">
             <h2>Wykres</h2>
 
             <input type="hidden" id="thread-type" value="@((int)BusinessLogic.Enums.EScheduleType.Edf)" />
@@ -57,6 +57,6 @@
 @section Scripts {
     <script>
         setInterval(refreshLogsContainer, 1000);
-        setInterval(refreshChartContainer, 1000);
+        setInterval(refreshThreadContainer, 1000);
     </script>
 }

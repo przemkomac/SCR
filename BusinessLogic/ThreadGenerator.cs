@@ -67,7 +67,10 @@ namespace Logic
                 };
 
                 ThreadStorage.AddThread(thread);
-                ThreadStorage.AddLog($"Dodano zadanie o ID {thread.Id}, złożoności {thread.Cost} s. i priorytecie {thread.Priority}.");
+                ThreadStorage.AddLog(
+                    $"Dodano zadanie o ID {thread.Id}, " +
+                    $"złożoności {thread.Cost} s. i " +
+                    $"priorytecie {thread.Priority}.");
             }
             else
             {
@@ -79,7 +82,10 @@ namespace Logic
                 };
 
                 ThreadStorage.AddThread(thread);
-                ThreadStorage.AddLog($"Dodano zadanie o ID {thread.Id}, złożoności {thread.Cost} s. i deadline {thread.Deadline}.");
+                ThreadStorage.AddLog(
+                    $"Dodano zadanie o ID {thread.Id}, " +
+                    $"złożoności {thread.Cost} s. i " +
+                    $"deadline {thread.Deadline:dd/MM/yyyy HH:mm:ss}.");
             }
         }
     }

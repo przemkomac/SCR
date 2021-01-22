@@ -1,0 +1,101 @@
+﻿<div id="timeline"></div>
+
+<script>
+    var refreshChartContainerIntervalId = setInterval(refreshChartContainer, 3000);
+
+    function refreshChartContainer() {
+        var threadType = $("#thread-type").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/Home/Threads?type=" + threadType,
+            success: function (response) {
+                if (response.length === 0) {
+                    return;
+                }
+
+                $("#timeline").empty();
+
+                var data = [
+                    {
+                        thresholds: [{ begin: createDate('18:22'), end: createDate('18:30') }],
+                        description: 'Czas procesora',
+                        activities: []
+                    }
+                ];
+
+                $.each(response, function (index, value) {
+                    var status = '';
+                    if (value.threadStatus == 1) {
+                        status = 'Dodany';
+                    }
+                    else if (value.threadStatus == 2) {
+                        status = 'Wykonywany';
+                    }
+                    else if (value.threadStatus == 3) {
+                        status = 'Zakończony';
+                    }
+
+                    var threadSpecialField;
+                    if (threadType == 0) { // priority
+                        threadSpecialField = '<br />Priorytet: ' + value.priority;
+                    }
+                    else { //edf or dms
+                        threadSpecialField = '<br />Ważny do: ' + formatDate(value.deadline);
+                    }
+
+                    var description =
+                        'Id: ' + value.id +
+                        '<br />Dodany: ' + formatDate(value.inserted) +
+                        '<br />Uruchomiony: ' + formatDate(value.started) +
+                        '<br />Wykonany: ' + formatDate(value.finished) +
+                        threadSpecialField +
+                        '<br />Koszt: ' + value.cost +
+                        '<br />Status: ' + status;
+
+                    var code = '';
+                    if (index % 2 == 0) {
+                        code = 'EVEN';
+                    } else {
+                        code = 'ODD';
+                    }
+
+                    data[0].activities.push({
+                        code: code,
+                        description: description,
+                        begin: new Date(value.started),
+                        end: new Date(value.finished)
+                    });
+                });
+
+                $('#timeline').stackedGantt({
+                    data: data,
+                    style: {
+                        activityStyle: {
+                            'EVEN': { color: "#ea8787" },
+                            'ODD': { color: "#b3b94e" },
+                        },
+                        showDateOnHeader: true,
+                        dateHeaderFormat: function (date) {
+                            var today = new Date();
+                            var dd = String(today.getDate()).padStart(2, '0');
+                            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                            var yyyy = today.getFullYear();
+
+                            today = mm + '/' + dd + '/' + yyyy;
+
+                            return today;
+                        }
+                    }
+                });
+
+                $("#sg_date_header_container").remove();
+
+                //TODO : id response has all threads ended - stop refreshChartContainerIntervalId
+                //if (response.) {
+
+                //}
+            }
+        });
+    }
+</script>

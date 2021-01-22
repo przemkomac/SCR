@@ -7,6 +7,7 @@ namespace DataAccess.Models
     {
         public Guid Id { get; set; }
         public DateTime Inserted { get; set; }
+        public DateTime? Started { get; set; }
         public DateTime? Finished { get; set; }
         public EThreadStatus ThreadStatus { get; set; }
         public int Cost { get; set; }

@@ -1,15 +1,29 @@
 ﻿function formatDate(dateStr) {
-    var date = new Date(dateStr);
+    if (dateStr) {
+        var date = new Date(dateStr);
 
-    var dateStr =
-        ("00" + date.getDate()).slice(-2) + "/" +
-        ("00" + (date.getMonth() + 1)).slice(-2) + "/" +
-        date.getFullYear() + " " +
-        ("00" + date.getHours()).slice(-2) + ":" +
-        ("00" + date.getMinutes()).slice(-2) + ":" +
-        ("00" + date.getSeconds()).slice(-2);
+        var dateStr =
+            ("00" + date.getDate()).slice(-2) + "/" +
+            ("00" + (date.getMonth() + 1)).slice(-2) + "/" +
+            date.getFullYear() + " " +
+            ("00" + date.getHours()).slice(-2) + ":" +
+            ("00" + date.getMinutes()).slice(-2) + ":" +
+            ("00" + date.getSeconds()).slice(-2);
 
-    return dateStr;
+        return dateStr;
+    }
+
+    return "null";
+}
+
+function createDate(time, daysToSum) {
+    var split = time.split(':');
+    var ret = new Date();
+    ret.setHours(split[0]);
+    ret.setMinutes(split[1]);
+
+    if (daysToSum) ret.setDate(ret.getDate() + daysToSum);
+    return ret;
 }
 
 function refreshLogsContainer() {
@@ -30,7 +44,7 @@ function refreshLogsContainer() {
     });
 }
 
-function refreshChartContainer() {
+function refreshThreadContainer() {
     var threadType = $("#thread-type").val();
 
     $.ajax({
@@ -41,7 +55,7 @@ function refreshChartContainer() {
                 return;
             }
 
-            $("#chart-container ul").empty();
+            $("#thread-container ul").empty();
 
             $.each(response, function (index, value) {
                 var status = '';
@@ -63,10 +77,11 @@ function refreshChartContainer() {
                     threadSpecialField = '<br />Ważny do: ' + formatDate(value.deadline);
                 }
 
-                $("#chart-container ul").append(
+                $("#thread-container ul").append(
                     '<li class="list-group-item">' +
                         'Id: ' + value.id +
                         '<br />Dodany: ' + formatDate(value.inserted) +
+                        '<br />Uruchomiony: ' + formatDate(value.started) +
                         '<br />Wykonany: ' + formatDate(value.finished) +
                         threadSpecialField +
                         '<br />Koszt: ' + value.cost +
