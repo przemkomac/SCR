@@ -1,7 +1,7 @@
-﻿<div id="timeline"></div>
+﻿<div id="chartContainer"></div>
 
 <script>
-    var refreshChartContainerIntervalId = setInterval(refreshChartContainer, 3000);
+    var refreshChartContainerIntervalId = setInterval(refreshChartContainer, 1000);
 
     function refreshChartContainer() {
         var threadType = $("#thread-type").val();
@@ -14,87 +14,53 @@
                     return;
                 }
 
-                $("#timeline").empty();
+                if (response.every(function (thread) { return thread.threadStatus == 3; })) {
+                    clearInterval(refreshChartContainerIntervalId);
+                }
 
-                var data = [
-                    {
-                        thresholds: [{ begin: createDate('18:22'), end: createDate('18:30') }],
-                        description: 'Czas procesora',
-                        activities: []
-                    }
-                ];
+                // remove not started
+                var threads = jQuery.grep(response, function (thread, i) {
+                    return (thread.started !== "" && thread.started != null);
+                });
 
-                $.each(response, function (index, value) {
-                    var status = '';
-                    if (value.threadStatus == 1) {
-                        status = 'Dodany';
-                    }
-                    else if (value.threadStatus == 2) {
-                        status = 'Wykonywany';
-                    }
-                    else if (value.threadStatus == 3) {
-                        status = 'Zakończony';
-                    }
+                // order by start date
+                threads.sort(function (a, b) {
+                    return new Date(b.date) - new Date(a.date);
+                });
 
-                    var threadSpecialField;
-                    if (threadType == 0) { // priority
-                        threadSpecialField = '<br />Priorytet: ' + value.priority;
-                    }
-                    else { //edf or dms
-                        threadSpecialField = '<br />Ważny do: ' + formatDate(value.deadline);
-                    }
+                var options = {
+                    animationEnabled: false,
+                    title: {
+                        text: "Czas pracy procesora"
+                    },
+                    axisY: {
+                        suffix: " s"
+                    },
+                    toolTip: {
+                        shared: true,
+                        reversed: true
+                    },
+                    legend: {
+                        reversed: true,
+                        verticalAlign: "center",
+                        horizontalAlign: "right"
+                    },
+                    data: []
+                };
 
-                    var description =
-                        'Id: ' + value.id +
-                        '<br />Dodany: ' + formatDate(value.inserted) +
-                        '<br />Uruchomiony: ' + formatDate(value.started) +
-                        '<br />Wykonany: ' + formatDate(value.finished) +
-                        threadSpecialField +
-                        '<br />Koszt: ' + value.cost +
-                        '<br />Status: ' + status;
-
-                    var code = '';
-                    if (index % 2 == 0) {
-                        code = 'EVEN';
-                    } else {
-                        code = 'ODD';
-                    }
-
-                    data[0].activities.push({
-                        code: code,
-                        description: description,
-                        begin: new Date(value.started),
-                        end: new Date(value.finished)
+                $.each(threads, function (index, value) {
+                    options.data.push({
+                        type: "stackedColumn",
+                        name: value.id,
+                        showInLegend: true,
+                        yValueFormatString: "#,##0\" s\"",
+                        dataPoints: [
+                            { label: "Czas", y: value.cost },
+                        ]
                     });
                 });
 
-                $('#timeline').stackedGantt({
-                    data: data,
-                    style: {
-                        activityStyle: {
-                            'EVEN': { color: "#ea8787" },
-                            'ODD': { color: "#b3b94e" },
-                        },
-                        showDateOnHeader: true,
-                        dateHeaderFormat: function (date) {
-                            var today = new Date();
-                            var dd = String(today.getDate()).padStart(2, '0');
-                            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                            var yyyy = today.getFullYear();
-
-                            today = mm + '/' + dd + '/' + yyyy;
-
-                            return today;
-                        }
-                    }
-                });
-
-                $("#sg_date_header_container").remove();
-
-                //TODO : id response has all threads ended - stop refreshChartContainerIntervalId
-                //if (response.) {
-
-                //}
+                $("#chartContainer").CanvasJSChart(options);
             }
         });
     }

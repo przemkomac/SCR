@@ -30,10 +30,10 @@ namespace Logic
 
         public void Start(int consumeCount)
         {
-            ThreadStorage.AddLog($"Konsumer uruchomi się za {START_DELAY_SECONDS} s.");
+            ThreadStorage.AddLog($"Konsument uruchomi się za {START_DELAY_SECONDS} s.");
             Thread.Sleep(START_DELAY_SECONDS * 1000);
 
-            ThreadStorage.AddLog($"Konsumer rozpoczął pracę.");
+            ThreadStorage.AddLog($"Konsument rozpoczął pracę.");
 
             while (consumeCount > 0)
             {
@@ -41,7 +41,7 @@ namespace Logic
                 consumeCount--;
             }
 
-            ThreadStorage.AddLog($"Konsumer zakończył pracę.");
+            ThreadStorage.AddLog($"Konsument zakończył pracę.");
         }
 
         private void ConsumeNext()

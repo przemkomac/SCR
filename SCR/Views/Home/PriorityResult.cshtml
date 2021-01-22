@@ -9,32 +9,33 @@
 <hr />
 
 <div class="col-md-12">
-    <div class="col-md-12">
-        <h2>Podsumowanie</h2>
-        <div class="form-group">
-            <label asp-for="GenerateCount" class="control-label"></label>
-            <a> > @Model.GenerateCount</a>
-        </div>
-        <div class="form-group">
-            <label asp-for="GenerationIntervalFrom" class="control-label"></label>
-            <a> > @Model.GenerationIntervalFrom</a>
-        </div>
-        <div class="form-group">
-            <label asp-for="GenerationIntervalTo" class="control-label"></label>
-            <a> > @Model.GenerationIntervalTo</a>
-        </div>
-        <div class="form-group">
-            <label asp-for="CostFrom" class="control-label"></label>
-            <a> > @Model.CostFrom</a>
-        </div>
-        <div class="form-group">
-            <label asp-for="CostTo" class="control-label"></label>
-            <a> > @Model.CostTo</a>
-        </div>
-    </div>
-
     <div class="row">
-        <partial name="_GanttChartPartial" />
+        <div class="col-md-6">
+            <h2>Podsumowanie</h2>
+            <div class="form-group">
+                <label asp-for="GenerateCount" class="control-label"></label>
+                <a> > @Model.GenerateCount</a>
+            </div>
+            <div class="form-group">
+                <label asp-for="GenerationIntervalFrom" class="control-label"></label>
+                <a> > @Model.GenerationIntervalFrom</a>
+            </div>
+            <div class="form-group">
+                <label asp-for="GenerationIntervalTo" class="control-label"></label>
+                <a> > @Model.GenerationIntervalTo</a>
+            </div>
+            <div class="form-group">
+                <label asp-for="CostFrom" class="control-label"></label>
+                <a> > @Model.CostFrom</a>
+            </div>
+            <div class="form-group">
+                <label asp-for="CostTo" class="control-label"></label>
+                <a> > @Model.CostTo</a>
+            </div>
+        </div>
+        <div class="col-md-6" style="min-height: 400px;">
+            <partial name="_GanttChartPartial" />
+        </div>
     </div>
 
     <div class="row">

@@ -5,14 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SCR</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/qunit/qunit.css" />
-    <link rel="stylesheet" href="~/lib/stacked-gantt/jquery.stacked-gantt.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/qunit/qunit.js"></script>
-    <script src="~/lib/moment/moment.js"></script>
-    <script src="~/lib/stacked-gantt/jquery.stacked-gantt.min.js"></script>
+    <script src="~/lib/canvasjs/jquery.canvasjs.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 </head>
 <body>
@@ -48,7 +44,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; @DateTime.Today.Year - Przemysław Maciejewski - projekt zaliczeniowy
+            &copy; @DateTime.Today.Year - Przemysław Maciejewski - Przemysław Muszyński - projekt zaliczeniowy
         </div>
     </footer>
     @await RenderSectionAsync("Scripts", required: false)
