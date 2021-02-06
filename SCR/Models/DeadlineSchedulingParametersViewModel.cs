@@ -1,16 +1,19 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using WebApp.Models.Parameters;
 
 namespace WebApp.Models
 {
-    public class PrioritySchedulingParametersViewModel
+    public class DeadlineSchedulingParametersViewModel
     {
-        [DisplayName("Czas przetwarzania")]
-        public int Capacity { get; set; }
+        public DeadlineSchedulingParametersViewModel()
+        {
+            DeadlineParameters = new List<DeadlineParameterViewModel>();
+        }
 
-        [DisplayName("Okres")]
-        public int Period { get; set; } 
+        public IEnumerable<DeadlineParameterViewModel> DeadlineParameters { get; set; }
 
-        [DisplayName("Termin")]
-        public int Deadline { get; set; }
+        [DisplayName("Czas wykonywania")]
+        public int ExecutionTime { get; set; }
     }
 }

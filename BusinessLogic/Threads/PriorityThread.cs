@@ -1,4 +1,4 @@
-﻿namespace DataAccess.Models
+﻿namespace BusinessLogic.Threads
 {
     public class PriorityThread : BaseThread
     {

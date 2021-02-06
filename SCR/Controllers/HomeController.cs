@@ -1,15 +1,14 @@
 ﻿using BusinessLogic;
 using BusinessLogic.Enums;
-using DataAccess.Models;
-using Logic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SCR.Models;
-using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
+using BusinessLogic.Threads;
 using WebApp.Models;
+using WebApp.Models.Parameters;
+using WebApp.ViewModelBuilders;
 
 namespace SCR.Controllers
 {
@@ -27,98 +26,48 @@ namespace SCR.Controllers
             return View();
         }
 
-        public IActionResult Priority()
-        {
-            //default values
-            var emptyModel = new ExecuteLogicViewModel
-            {
-                GenerateCount = 5,
-                GenerationIntervalFrom = 2,
-                GenerationIntervalTo = 4,
-                CostFrom = 3,
-                CostTo = 6
-            };
-            return View(emptyModel);
-        }
+        //public IActionResult Priority()
+        //{
+        //    return View();
+        //}
 
-        [HttpPost]
-        public IActionResult PriorityResult(ExecuteLogicViewModel model)
-        {
-            var generator = new ThreadGenerator(
-                EScheduleType.Priority,
-                model.GenerationIntervalFrom,
-                model.GenerationIntervalTo,
-                model.CostFrom,
-                model.CostTo);
+        //[HttpPost]
+        //public IActionResult PriorityResult(IEnumerable<PrioritySchedulingParametersViewModel> model)
+        //{
+        //    return View("PriorityResult", model);
+        //}
 
-            var consumer = new ThreadConsumer(EScheduleType.Priority);
+        //public IActionResult Dms()
+        //{
+        //    return View();
+        //}
 
-            //run in backgroud
-            _ = Task.Run(() => generator.Start(model.GenerateCount));
-            _ = Task.Run(() => consumer.Start(model.GenerateCount));
-
-            return View(model);
-        }
-
-        public IActionResult Dms()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult DmsResult()
-        {
-            return View();
-        }
+        //[HttpPost]
+        //public IActionResult DmsResult()
+        //{
+        //    return View("DmsResult", model);
+        //}
 
         public IActionResult Edf()
         {
-            var emptyModel = new ExecuteLogicViewModel
-            {
-                GenerateCount = 5,
-                GenerationIntervalFrom = 1,
-                GenerationIntervalTo = 3,
-                CostFrom = 2,
-                CostTo = 10
-            };
-            return View(emptyModel);
-        }
-
-        [HttpPost]
-        public IActionResult EdfResult(ExecuteLogicViewModel model)
-        {
-            var generator = new ThreadGenerator(
-                 EScheduleType.Edf,
-                 model.GenerationIntervalFrom,
-                 model.GenerationIntervalTo,
-                 model.CostFrom,
-                 model.CostTo);
-
-            var consumer = new ThreadConsumer(EScheduleType.Edf);
-
-            //run in backgroud
-            _ = Task.Run(() => generator.Start(model.GenerateCount));
-            _ = Task.Run(() => consumer.Start(model.GenerateCount));
-
+            var model = DeadlineSchedulingParametersViewModelBuilder.Build();
             return View(model);
         }
 
-        public IActionResult Threads(int type)
+        [HttpPost]
+        public IActionResult EdfResult(DeadlineSchedulingParametersViewModel model)
         {
-            var threads = StorageService.GetThreads();
+            var sorter = new ThreadSorter(EScheduleType.Edf, model.ExecutionTime);
 
-            switch ((EScheduleType)type)
-            {
-                case EScheduleType.Priority:
-                    return Json(threads.Cast<PriorityThread>());
+            var deadlineParameters = model.DeadlineParameters
+                .Select(DeadlineSchedulingParametersViewModelBuilder.ToDeadlineThread)
+                .ToList();
+            var parameters = sorter.Sort(deadlineParameters)
+                .Select(param => DeadlineSchedulingParametersViewModelBuilder.ToDeadlineParameterViewModel((DeadlineThread)param))
+                .ToList();
+            model.DeadlineParameters = parameters;
 
-                case EScheduleType.Dms:
-                case EScheduleType.Edf:
-                    return Json(threads.Cast<DeadlineThread>());
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            return View("EdfResult", model);
         }
 
         public IActionResult Logs()

@@ -1,67 +1,15 @@
-﻿<div id="chartContainer"></div>
+﻿@using Newtonsoft.Json
+
+@model IEnumerable<WebApp.Models.Parameters.DeadlineParameterViewModel>
+
+<h2>Wykres</h2>
+
+<div id="chartContainer">
+    <ul class="list-group">
+        <li class="list-group-item">Oczekiwanie na dane...</li>
+    </ul>
+</div>
 
 <script>
-    var refreshChartContainerIntervalId = setInterval(refreshChartContainer, 1000);
-
-    function refreshChartContainer() {
-        var threadType = $("#thread-type").val();
-
-        $.ajax({
-            type: "GET",
-            url: "/Home/Threads?type=" + threadType,
-            success: function (response) {
-                if (response.length === 0) {
-                    return;
-                }
-
-                if (response.every(function (thread) { return thread.threadStatus == 3; })) {
-                    clearInterval(refreshChartContainerIntervalId);
-                }
-
-                // remove not started
-                var threads = jQuery.grep(response, function (thread, i) {
-                    return (thread.started !== "" && thread.started != null);
-                });
-
-                // order by start date
-                threads.sort(function (a, b) {
-                    return new Date(b.date) - new Date(a.date);
-                });
-
-                var options = {
-                    animationEnabled: false,
-                    title: {
-                        text: "Czas pracy procesora"
-                    },
-                    axisY: {
-                        suffix: " s"
-                    },
-                    toolTip: {
-                        shared: true,
-                        reversed: true
-                    },
-                    legend: {
-                        reversed: true,
-                        verticalAlign: "center",
-                        horizontalAlign: "right"
-                    },
-                    data: []
-                };
-
-                $.each(threads, function (index, value) {
-                    options.data.push({
-                        type: "stackedColumn",
-                        name: value.id,
-                        showInLegend: true,
-                        yValueFormatString: "#,##0\" s\"",
-                        dataPoints: [
-                            { label: "Czas", y: value.cost },
-                        ]
-                    });
-                });
-
-                $("#chartContainer").CanvasJSChart(options);
-            }
-        });
-    }
+    setTimeout(function () { initGraph(@Html.Raw(JsonConvert.SerializeObject(Model))); }, 2000);
 </script>

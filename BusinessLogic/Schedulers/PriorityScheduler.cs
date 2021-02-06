@@ -1,19 +1,20 @@
-﻿using DataAccess.Enums;
-using DataAccess.Models;
+﻿using BusinessLogic.Threads;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BusinessLogic.Schedulers
 {
     public class PriorityScheduler : BaseSchedule<PriorityThread>
     {
-        public override PriorityThread GetNextThread(List<PriorityThread> threads)
+        private readonly int _excutionTime;
+
+        public PriorityScheduler(int excutionTime)
         {
-            return threads
-                .Where(t => t.ThreadStatus == EThreadStatus.Added)
-                .OrderByDescending(t => t.Priority)
-                .ThenBy(t => t.Inserted)
-                .FirstOrDefault();
+            _excutionTime = excutionTime;
+        }
+
+        public override IEnumerable<PriorityThread> SortThreads(IEnumerable<PriorityThread> threads)
+        {
+            return threads;
         }
     }
 }

@@ -1,20 +1,20 @@
-﻿using BusinessLogic.Schedulers;
-using DataAccess.Enums;
-using DataAccess.Models;
+﻿using BusinessLogic.Threads;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace Logic.Schedulers
+namespace BusinessLogic.Schedulers
 {
     public class EdfScheduler : BaseSchedule<DeadlineThread>
     {
-        public override DeadlineThread GetNextThread(List<DeadlineThread> threads)
+        private readonly int _excutionTime;
+
+        public EdfScheduler(int excutionTime)
         {
-            return threads
-                .Where(t => t.ThreadStatus == EThreadStatus.Added)
-                .OrderBy(t => t.Deadline)
-                .ThenBy(t => t.Inserted)
-                .FirstOrDefault();
+            _excutionTime = excutionTime;
+        }
+
+        public override IEnumerable<DeadlineThread> SortThreads(IEnumerable<DeadlineThread> threads)
+        {
+            return threads;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿@model WebApp.Models.ExecuteLogicViewModel
+﻿@using System.Linq
+@model WebApp.Models.DeadlineSchedulingParametersViewModel
 
 @{
     ViewData["Title"] = "Scheduler - algorytm EDF";
@@ -10,59 +11,53 @@
 
 <div class="col-md-12">
     <div class="row">
-        <div class="col-md-6">
-            <h2>Podsumowanie</h2>
-            <div class="form-group">
-                <label asp-for="GenerateCount" class="control-label"></label>
-                <a> > @Model.GenerateCount</a>
-            </div>
-            <div class="form-group">
-                <label asp-for="GenerationIntervalFrom" class="control-label"></label>
-                <a> > @Model.GenerationIntervalFrom</a>
-            </div>
-            <div class="form-group">
-                <label asp-for="GenerationIntervalTo" class="control-label"></label>
-                <a> > @Model.GenerationIntervalTo</a>
-            </div>
-            <div class="form-group">
-                <label asp-for="CostFrom" class="control-label"></label>
-                <a> > @Model.CostFrom</a>
-            </div>
-            <div class="form-group">
-                <label asp-for="CostTo" class="control-label"></label>
-                <a> > @Model.CostTo</a>
+        <div class="col-md-5">
+            <h2>Zadane parametry</h2>
+            
+            <br/>
+
+            <p><b>@Html.DisplayNameFor(model => model.ExecutionTime):</b> @Html.DisplayFor(model => model.ExecutionTime)</p>
+
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model.DeadlineParameters.GetEnumerator().Current.Capacity)</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model.DeadlineParameters.GetEnumerator().Current.Period)</th>
+                    <th scope="col">@Html.DisplayNameFor(model => model.DeadlineParameters.GetEnumerator().Current.Deadline)</th>
+                </tr>
+                </thead>
+                <tbody>
+                @for (var i = 0; i < Model.DeadlineParameters.Count(); i++)
+                {
+                    <tr>
+                        <th scope="row">@(i+1)</th>
+                        <td>@Model.DeadlineParameters.ElementAt(i).Capacity</td>
+                        <td>@Model.DeadlineParameters.ElementAt(i).Period</td>
+                        <td>@Model.DeadlineParameters.ElementAt(i).Deadline</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+            
+            
+            <div id="logs-container">
+                <h2>Logi</h2>
+
+                <ul class="list-group">
+                    <li class="list-group-item">Oczekiwanie na dane...</li>
+                </ul>
             </div>
         </div>
 
-        <div class="col-md-6" style="min-height: 400px;">
-            <partial name="_GanttChartPartial" />
-        </div>
-    </div>
-
-    <div class="row">
-        <div style="width: 50%" id="thread-container">
-            <h2>Wykres</h2>
-
-            <input type="hidden" id="thread-type" value="@((int)BusinessLogic.Enums.EScheduleType.Edf)" />
-
-            <ul class="list-group">
-                <li class="list-group-item">Oczekiwanie na dane...</li>
-            </ul>
-        </div>
-
-        <div style="width: 50%" id="logs-container">
-            <h2>Logi</h2>
-
-            <ul class="list-group">
-                <li class="list-group-item">Oczekiwanie na dane...</li>
-            </ul>
+        <div class="col-md-7" style="min-height: 700px;">
+            <partial name="_GanttChartPartial" model="Model.DeadlineParameters" />
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        setInterval(refreshLogsContainer, 1000);
-        setInterval(refreshThreadContainer, 1000);
+        setTimeout(function () { refreshLogsContainer(); }, 2000);
     </script>
 }

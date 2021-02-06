@@ -1,50 +1,74 @@
-﻿@model WebApp.Models.ExecuteLogicViewModel
+﻿@model WebApp.Models.DeadlineSchedulingParametersViewModel
 
 @{
-    ViewData["Title"] = "Scheduler - algorytm priorytetowy";
+    ViewData["Title"] = "Scheduler - algorytm EDF";
 }
 
 <h1>@ViewData["Title"]</h1>
 
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="EdfResult">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="GenerateCount" class="control-label"></label>
-                <input asp-for="GenerateCount" class="form-control" />
-                <span asp-validation-for="GenerateCount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GenerationIntervalFrom" class="control-label"></label>
-                <input asp-for="GenerationIntervalFrom" class="form-control" />
-                <span asp-validation-for="GenerationIntervalFrom" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GenerationIntervalTo" class="control-label"></label>
-                <input asp-for="GenerationIntervalTo" class="form-control" />
-                <span asp-validation-for="GenerationIntervalTo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CostFrom" class="control-label"></label>
-                <input asp-for="CostFrom" class="form-control" />
-                <span asp-validation-for="CostFrom" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CostTo" class="control-label"></label>
-                <input asp-for="CostTo" class="form-control" />
-                <span asp-validation-for="CostTo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Rozpocznij" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+<div class="col-md-12">
+    <form asp-action="EdfResult">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<div>
-    <a asp-action="Index">Wróć</a>
+        <div class="row col-md-4">
+            <div class="form-group">
+                <label asp-for="ExecutionTime"></label>
+                <input asp-for="ExecutionTime" class="form-control" />
+                <span asp-validation-for="ExecutionTime" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+
+            @if (Model.DeadlineParameters.Any())
+            {
+                for (var i = 0; i < Model.DeadlineParameters.Count(); i++)
+                {
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label>@Html.DisplayNameFor(model => model.DeadlineParameters.ElementAt(0).Capacity)"</label>
+                            <input name="DeadlineParameters[@i].Capacity" asp-for="@Model.DeadlineParameters.ElementAt(i).Capacity" class="form-control" />
+                            <span asp-validation-for="@Model.DeadlineParameters.ElementAt(i).Capacity" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>@Html.DisplayNameFor(model => model.DeadlineParameters.ElementAt(0).Period)</label>
+                            <input name="DeadlineParameters[@i].Period" asp-for="@Model.DeadlineParameters.ElementAt(i).Period" class="form-control" />
+                            <span asp-validation-for="@Model.DeadlineParameters.ElementAt(i).Period" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label asp-for="@Model.DeadlineParameters.ElementAt(i).Deadline"></label>
+                            <input name="DeadlineParameters[@i].Deadline" asp-for="@Model.DeadlineParameters.ElementAt(i).Deadline" class="form-control" />
+                            <span asp-validation-for="@Model.DeadlineParameters.ElementAt(i).Deadline" class="text-danger"></span>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="form-group">
+                    <label>@Html.DisplayNameFor(model => model.DeadlineParameters.ElementAt(0).Capacity)</label>
+                    <input name="DeadlineParameters[0].Capacity" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>@Html.DisplayNameFor(model => model.DeadlineParameters.ElementAt(0).Period)</label>
+                    <input name="DeadlineParameters[0].Period" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>@Html.DisplayNameFor(model => model.DeadlineParameters.ElementAt(0).Deadline)</label>
+                    <input name="DeadlineParameters[0].Deadline" class="form-control" />
+                </div>
+            }
+
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Rozpocznij" class="btn btn-primary" />
+            <a asp-action="Index">Wróć</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

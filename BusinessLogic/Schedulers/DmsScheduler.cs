@@ -1,14 +1,20 @@
-﻿using BusinessLogic.Schedulers;
-using DataAccess.Models;
+﻿using BusinessLogic.Threads;
 using System.Collections.Generic;
 
-namespace Logic.Schedulers
+namespace BusinessLogic.Schedulers
 {
     public class DmsScheduler : BaseSchedule<DeadlineThread>
     {
-        public override DeadlineThread GetNextThread(List<DeadlineThread> threads)
+        private readonly int _excutionTime;
+
+        public DmsScheduler(int excutionTime)
         {
-            throw new System.NotImplementedException();
+            _excutionTime = excutionTime;
+        }
+
+        public override IEnumerable<DeadlineThread> SortThreads(IEnumerable<DeadlineThread> threads)
+        {
+            return threads;
         }
     }
 }

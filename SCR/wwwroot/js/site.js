@@ -16,16 +16,6 @@
     return "null";
 }
 
-function createDate(time, daysToSum) {
-    var split = time.split(':');
-    var ret = new Date();
-    ret.setHours(split[0]);
-    ret.setMinutes(split[1]);
-
-    if (daysToSum) ret.setDate(ret.getDate() + daysToSum);
-    return ret;
-}
-
 function refreshLogsContainer() {
     $.ajax({
         type: "GET",
@@ -44,50 +34,38 @@ function refreshLogsContainer() {
     });
 }
 
-function refreshThreadContainer() {
-    var threadType = $("#thread-type").val();
+function initGraph(threads) {
+    var options = {
+        animationEnabled: false,
+        title: {
+            text: "Czas pracy procesora"
+        },
+        axisY: {
+            suffix: " s"
+        },
+        toolTip: {
+            shared: true,
+            reversed: true
+        },
+        legend: {
+            reversed: true,
+            verticalAlign: "center",
+            horizontalAlign: "right"
+        },
+        data: []
+    };
 
-    $.ajax({
-        type: "GET",
-        url: "/Home/Threads?type=" + threadType,
-        success: function (response) {
-            if (response.length === 0) {
-                return;
-            }
-
-            $("#thread-container ul").empty();
-
-            $.each(response, function (index, value) {
-                var status = '';
-                if (value.threadStatus == 1) {
-                    status = 'Dodany';
-                }
-                else if (value.threadStatus == 2) {
-                    status = 'Wykonywany';
-                }
-                else if (value.threadStatus == 3) {
-                    status = 'Zakończony';
-                }
-
-                var threadSpecialField;
-                if (threadType == 0) { // priority
-                    threadSpecialField = '<br />Priorytet: ' + value.priority;
-                }
-                else { //edf or dms
-                    threadSpecialField = '<br />Ważny do: ' + formatDate(value.deadline);
-                }
-
-                $("#thread-container ul").append(
-                    '<li class="list-group-item">' +
-                        'Id: ' + value.id +
-                        '<br />Dodany: ' + formatDate(value.inserted) +
-                        '<br />Uruchomiony: ' + formatDate(value.started) +
-                        '<br />Wykonany: ' + formatDate(value.finished) +
-                        threadSpecialField +
-                        '<br />Koszt: ' + value.cost +
-                        '<br />Status: ' + status +
-                    '</li>');
-            });
-        }
+    $.each(threads, function (index, value) {
+        options.data.push({
+            type: "stackedColumn",
+            name: 'Thread no. ' + (index+1),
+            showInLegend: true,
+            yValueFormatString: "#,##0\" s\"",
+            dataPoints: [
+                { label: "Czas", y: value.Capacity }
+            ]
+        });
     });
+
+    $("#chartContainer").CanvasJSChart(options);
 }
