@@ -1,16 +1,15 @@
-﻿using BusinessLogic;
+﻿using System.Diagnostics;
+using System.Linq;
+using BusinessLogic;
 using BusinessLogic.Enums;
+using BusinessLogic.Threads;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SCR.Models;
-using System.Diagnostics;
-using System.Linq;
-using BusinessLogic.Threads;
 using WebApp.Models;
-using WebApp.Models.Parameters;
 using WebApp.ViewModelBuilders;
 
-namespace SCR.Controllers
+namespace WebApp.Controllers
 {
     public class HomeController : Controller
     {
@@ -26,27 +25,49 @@ namespace SCR.Controllers
             return View();
         }
 
-        //public IActionResult Priority()
-        //{
-        //    return View();
-        //}
+        public IActionResult Priority()
+        {
+            var model = PrioritySchedulingParametersViewModelBuilder.Build();
+            return View(model);
+        }
 
-        //[HttpPost]
-        //public IActionResult PriorityResult(IEnumerable<PrioritySchedulingParametersViewModel> model)
-        //{
-        //    return View("PriorityResult", model);
-        //}
+        [HttpPost]
+        public IActionResult PriorityResult(PrioritySchedulingParametersViewModel model)
+        {
+            var sorter = new ThreadSorter(EScheduleType.Priority, model.ExecutionTime);
 
-        //public IActionResult Dms()
-        //{
-        //    return View();
-        //}
+            var deadlineParameters = model.PriorityParameters
+                .Select(PrioritySchedulingParametersViewModelBuilder.ToPriorityThread)
+                .ToList();
+            var parameters = sorter.Sort(deadlineParameters)
+                .Select(param => PrioritySchedulingParametersViewModelBuilder.ToPriorityParameterViewModel((PriorityThread)param))
+                .ToList();
+            model.PriorityParameters = parameters;
 
-        //[HttpPost]
-        //public IActionResult DmsResult()
-        //{
-        //    return View("DmsResult", model);
-        //}
+            return View("PriorityResult", model);
+        }
+
+        public IActionResult Dms()
+        {
+            var model = DeadlineSchedulingParametersViewModelBuilder.Build();
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult DmsResult(DeadlineSchedulingParametersViewModel model)
+        {
+            var sorter = new ThreadSorter(EScheduleType.Dms, model.ExecutionTime);
+
+            var deadlineParameters = model.DeadlineParameters
+                .Select(DeadlineSchedulingParametersViewModelBuilder.ToDeadlineThread)
+                .ToList();
+            var parameters = sorter.Sort(deadlineParameters)
+                .Select(param => DeadlineSchedulingParametersViewModelBuilder.ToDeadlineParameterViewModel((DeadlineThread)param))
+                .ToList();
+            model.DeadlineParameters = parameters;
+
+            return View("DmsResult", model);
+        }
 
         public IActionResult Edf()
         {

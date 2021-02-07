@@ -2,14 +2,8 @@
 
 namespace WebApp.Models.Parameters
 {
-    public class PriorityParameterViewModel
+    public class PriorityParameterViewModel : BaseParameterViewModel
     {
-        [DisplayName("Czas przetwarzania")]
-        public int Capacity { get; set; }
-
-        [DisplayName("Okres")]
-        public int Period { get; set; }
-
         [DisplayName("Priorytet")]
         public int Priority { get; set; }
     }

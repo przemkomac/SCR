@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BusinessLogic.Threads;
+﻿using BusinessLogic.Threads;
+using System.Collections.Generic;
 using WebApp.Models;
 using WebApp.Models.Parameters;
 
@@ -26,6 +26,16 @@ namespace WebApp.ViewModelBuilders
         public static PriorityThread ToPriorityThread(PriorityParameterViewModel model)
         {
             return new PriorityThread
+            {
+                Capacity = model.Capacity,
+                Period = model.Period,
+                Priority = model.Priority
+            };
+        }
+
+        public static PriorityParameterViewModel ToPriorityParameterViewModel(PriorityThread model)
+        {
+            return new PriorityParameterViewModel
             {
                 Capacity = model.Capacity,
                 Period = model.Period,
