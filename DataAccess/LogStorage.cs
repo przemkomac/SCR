@@ -35,5 +35,13 @@ namespace DataAccess
 
             return tempList;
         }
+
+        public static void ClearLogs(string log)
+        {
+            lock (_lockerLogs)
+            {
+                _logs = new List<KeyValuePair<DateTime, string>>();
+            }
+        }
     }
 }

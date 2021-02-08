@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Schedulers.Models;
 using BusinessLogic.Threads;
+using DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,16 @@ namespace BusinessLogic.Schedulers
 
         public override IEnumerable<ThreadExecution> SortThreads(IEnumerable<DeadlineThread> threads)
         {
+            LogStorage.AddLog("Uruchomiono algorytm zarządcy typu EDF");
+
             var processesWithPeriodRange = AssingProcessesIntoPeriods(threads);
+            LogStorage.AddLog($"Wyznaczono {processesWithPeriodRange.Count() - 1} wykonywań procesów");
+
             var orderedProcessesWithPeriodRange = processesWithPeriodRange.OrderBy(t => t.DeadlineTo);
+            LogStorage.AddLog("Posortowano procesy rosnąco");
+
             var threadsAndIdlesExecutionSequence = DesignateExecutionOrder(orderedProcessesWithPeriodRange);
+            LogStorage.AddLog("Przydzielono czas procesora do procesów");
 
             return threadsAndIdlesExecutionSequence;
         }
@@ -64,6 +72,9 @@ namespace BusinessLogic.Schedulers
                         threadExecutionsSequence.Add(idleExecutionItem);
 
                         i = thread.DeadlineFrom;
+
+                        if (i > _excutionTime)
+                            continue;
                     }
 
                     var threadExecutionItem = new ThreadExecution
@@ -93,8 +104,8 @@ namespace BusinessLogic.Schedulers
                 var wholePeriod = 0;
                 while (wholePeriod <= _excutionTime)
                 {
-                    var from = periods.LastOrDefault() == null 
-                        ? 0 
+                    var from = periods.LastOrDefault() == null
+                        ? 0
                         : periods.Last().PeriodTo + 1;
                     var to = from + thread.Deadline;
                     var periodTo = periods.LastOrDefault() == null

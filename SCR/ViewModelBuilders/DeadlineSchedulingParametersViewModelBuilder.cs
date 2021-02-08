@@ -14,9 +14,9 @@ namespace WebApp.ViewModelBuilders
                 ExecutionTime = 20,
                 DeadlineParameters = new List<DeadlineParameterViewModel>
                 {
-                    new DeadlineParameterViewModel {Capacity = 3, Period = 7, Deadline = 20},
-                    new DeadlineParameterViewModel {Capacity = 2, Period = 4, Deadline = 5},
-                    new DeadlineParameterViewModel {Capacity = 2, Period = 8, Deadline = 10},
+                    new DeadlineParameterViewModel {Capacity = 3, Period = 20, Deadline = 7},
+                    new DeadlineParameterViewModel {Capacity = 2, Period = 5, Deadline = 4},
+                    new DeadlineParameterViewModel {Capacity = 2, Period = 10, Deadline = 8},
                 }
             };
 
@@ -30,7 +30,7 @@ namespace WebApp.ViewModelBuilders
                 ThreadNo = model.ThreadNo,
                 Capacity = model.Capacity,
                 Period = model.Period,
-                Deadline = model.Period
+                Deadline = model.Deadline
             };
         }
 
@@ -41,7 +41,7 @@ namespace WebApp.ViewModelBuilders
                 ThreadNo = model.ThreadNo,
                 Capacity = model.Capacity,
                 Period = model.Period,
-                Deadline = model.Period
+                Deadline = model.Deadline
             };
         }
     }
