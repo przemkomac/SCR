@@ -35,6 +35,9 @@ function refreshLogsContainer() {
 }
 
 function initGraph(threads) {
+    var allowedColors = ["green", "red", "blue", "yellow", "black", "pink"];
+    var whiteColor = "white";
+
     var options = {
         animationEnabled: false,
         title: {
@@ -56,15 +59,29 @@ function initGraph(threads) {
     };
 
     $.each(threads, function (index, value) {
-        options.data.push({
-            type: "stackedColumn",
-            name: 'Thread no. ' + (index+1),
-            showInLegend: true,
-            yValueFormatString: "#,##0\" s\"",
-            dataPoints: [
-                { label: "Czas", y: value.Capacity }
-            ]
-        });
+        if (value.ThreadNo === -1) {
+            options.data.push({
+                type: "stackedColumn",
+                name: 'IDLE',
+                color: whiteColor,
+                showInLegend: true,
+                yValueFormatString: "#,##0\" s\"",
+                dataPoints: [
+                    { label: "Czas", y: value.Capacity }
+                ]
+            });
+        } else {
+            options.data.push({
+                type: "stackedColumn",
+                name: 'Thread no. ' + (value.ThreadNo + 1),
+                color: allowedColors[value.ThreadNo],
+                showInLegend: true,
+                yValueFormatString: "#,##0\" s\"",
+                dataPoints: [
+                    { label: "Czas", y: value.Capacity }
+                ]
+            });
+        }
     });
 
     $("#chartContainer").CanvasJSChart(options);

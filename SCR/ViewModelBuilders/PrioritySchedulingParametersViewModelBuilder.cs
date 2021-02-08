@@ -27,6 +27,7 @@ namespace WebApp.ViewModelBuilders
         {
             return new PriorityThread
             {
+                ThreadNo = model.ThreadNo,
                 Capacity = model.Capacity,
                 Period = model.Period,
                 Priority = model.Priority
@@ -37,6 +38,7 @@ namespace WebApp.ViewModelBuilders
         {
             return new PriorityParameterViewModel
             {
+                ThreadNo = model.ThreadNo,
                 Capacity = model.Capacity,
                 Period = model.Period,
                 Priority = model.Priority

@@ -26,8 +26,10 @@
                 for (var i = 0; i < Model.PriorityParameters.Count(); i++)
                 {
                     <div class="form-row">
+                        @Html.Hidden($"PriorityParameters[{i}].ThreadNo", i.ToString())
+
                         <div class="form-group col-md-4">
-                            <label>@Html.DisplayNameFor(model => model.PriorityParameters.ElementAt(0).Capacity)"</label>
+                            <label>@Html.DisplayNameFor(model => model.PriorityParameters.ElementAt(0).Capacity)</label>
                             <input name="PriorityParameters[@i].Capacity" asp-for="@Model.PriorityParameters.ElementAt(i).Capacity" class="form-control" />
                             <span asp-validation-for="@Model.PriorityParameters.ElementAt(i).Capacity" class="text-danger"></span>
                         </div>
@@ -46,6 +48,8 @@
             }
             else
             {
+                @Html.Hidden("0", new { name = $"PriorityParameters[0].ThreadNo" })
+
                 <div class="form-group">
                     <label>@Html.DisplayNameFor(model => model.PriorityParameters.ElementAt(0).Capacity)</label>
                     <input name="PriorityParameters[0].Capacity" class="form-control" />

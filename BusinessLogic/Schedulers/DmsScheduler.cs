@@ -1,4 +1,6 @@
-﻿using BusinessLogic.Threads;
+﻿using BusinessLogic.Schedulers.Models;
+using BusinessLogic.Threads;
+using System;
 using System.Collections.Generic;
 
 namespace BusinessLogic.Schedulers
@@ -12,9 +14,9 @@ namespace BusinessLogic.Schedulers
             _excutionTime = excutionTime;
         }
 
-        public override IEnumerable<DeadlineThread> SortThreads(IEnumerable<DeadlineThread> threads)
+        public override IEnumerable<ThreadExecution> SortThreads(IEnumerable<DeadlineThread> threads)
         {
-            return threads;
+            throw new NotImplementedException();
         }
     }
 }

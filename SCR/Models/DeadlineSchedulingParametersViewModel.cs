@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using BusinessLogic.Schedulers.Models;
 using WebApp.Models.Parameters;
 
 namespace WebApp.Models
@@ -15,5 +16,7 @@ namespace WebApp.Models
 
         [DisplayName("Czas wykonywania")]
         public int ExecutionTime { get; set; }
+
+        public IEnumerable<ThreadExecution> ThreadExecutionSequence { get; set; }
     }
 }

@@ -36,13 +36,10 @@ namespace WebApp.Controllers
         {
             var sorter = new ThreadSorter(EScheduleType.Priority, model.ExecutionTime);
 
-            var deadlineParameters = model.PriorityParameters
+            var priorityParameters = model.PriorityParameters
                 .Select(PrioritySchedulingParametersViewModelBuilder.ToPriorityThread)
                 .ToList();
-            var parameters = sorter.Sort(deadlineParameters)
-                .Select(param => PrioritySchedulingParametersViewModelBuilder.ToPriorityParameterViewModel((PriorityThread)param))
-                .ToList();
-            model.PriorityParameters = parameters;
+            model.ThreadExecutionSequence = sorter.Sort(priorityParameters);
 
             return View("PriorityResult", model);
         }
@@ -61,10 +58,7 @@ namespace WebApp.Controllers
             var deadlineParameters = model.DeadlineParameters
                 .Select(DeadlineSchedulingParametersViewModelBuilder.ToDeadlineThread)
                 .ToList();
-            var parameters = sorter.Sort(deadlineParameters)
-                .Select(param => DeadlineSchedulingParametersViewModelBuilder.ToDeadlineParameterViewModel((DeadlineThread)param))
-                .ToList();
-            model.DeadlineParameters = parameters;
+            model.ThreadExecutionSequence = sorter.Sort(deadlineParameters);
 
             return View("DmsResult", model);
         }
@@ -83,10 +77,7 @@ namespace WebApp.Controllers
             var deadlineParameters = model.DeadlineParameters
                 .Select(DeadlineSchedulingParametersViewModelBuilder.ToDeadlineThread)
                 .ToList();
-            var parameters = sorter.Sort(deadlineParameters)
-                .Select(param => DeadlineSchedulingParametersViewModelBuilder.ToDeadlineParameterViewModel((DeadlineThread)param))
-                .ToList();
-            model.DeadlineParameters = parameters;
+            model.ThreadExecutionSequence = sorter.Sort(deadlineParameters);
 
             return View("EdfResult", model);
         }

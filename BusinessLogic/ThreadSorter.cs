@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Enums;
 using BusinessLogic.Schedulers;
+using BusinessLogic.Schedulers.Models;
 using BusinessLogic.Threads;
 using System;
 using System.Collections.Generic;
@@ -24,11 +25,8 @@ namespace BusinessLogic
             _edfScheduler = new EdfScheduler(excutionTime);
         }
 
-        public IEnumerable<BaseThread> Sort(IEnumerable<BaseThread> modelDeadlineParameters)
+        public IEnumerable<ThreadExecution> Sort(IEnumerable<BaseThread> modelDeadlineParameters)
         {
-            // konkretny scheduler musi konkretnie posortowac zadania
-            // nalezy pamiętać o wyświetleniu też pustych miejsc (przerw)
-
             switch (_scheduleType)
             {
                 case EScheduleType.Priority:
