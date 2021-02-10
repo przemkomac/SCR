@@ -36,7 +36,7 @@ namespace DataAccess
             return tempList;
         }
 
-        public static void ClearLogs(string log)
+        public static void ClearLogs()
         {
             lock (_lockerLogs)
             {

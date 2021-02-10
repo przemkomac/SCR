@@ -18,13 +18,15 @@ namespace BusinessLogic.Schedulers
 
         public override IEnumerable<ThreadExecution> SortThreads(IEnumerable<DeadlineThread> threads)
         {
+            LogStorage.ClearLogs();
+
             LogStorage.AddLog("Uruchomiono algorytm zarządcy typu EDF");
 
             var processesWithPeriodRange = AssingProcessesIntoPeriods(threads);
             LogStorage.AddLog($"Wyznaczono {processesWithPeriodRange.Count() - 1} wykonywań procesów");
 
             var orderedProcessesWithPeriodRange = processesWithPeriodRange.OrderBy(t => t.DeadlineTo);
-            LogStorage.AddLog("Posortowano procesy rosnąco");
+            LogStorage.AddLog("Posortowano procesy rosnącym terminem");
 
             var threadsAndIdlesExecutionSequence = DesignateExecutionOrder(orderedProcessesWithPeriodRange);
             LogStorage.AddLog("Przydzielono czas procesora do procesów");
@@ -32,12 +34,12 @@ namespace BusinessLogic.Schedulers
             return threadsAndIdlesExecutionSequence;
         }
 
-        private IEnumerable<ThreadExecution> DesignateExecutionOrder(IEnumerable<ThreadProcessWithPeriodRange> orderedProcessesWithPeriodRange)
+        private IEnumerable<ThreadExecution> DesignateExecutionOrder(IEnumerable<ThreadProcessWithDeadlineRange> orderedProcessesWithPeriodRange)
         {
             if (orderedProcessesWithPeriodRange == null || !orderedProcessesWithPeriodRange.Any())
                 throw new ArgumentException();
 
-            var queue = new Queue<ThreadProcessWithPeriodRange>(orderedProcessesWithPeriodRange);
+            var queue = new Queue<ThreadProcessWithDeadlineRange>(orderedProcessesWithPeriodRange);
 
             var threadExecutionsSequence = new List<ThreadExecution>();
 
@@ -93,37 +95,37 @@ namespace BusinessLogic.Schedulers
             return threadExecutionsSequence;
         }
 
-        public IEnumerable<ThreadProcessWithPeriodRange> AssingProcessesIntoPeriods(IEnumerable<DeadlineThread> threads)
+        public IEnumerable<ThreadProcessWithDeadlineRange> AssingProcessesIntoPeriods(IEnumerable<DeadlineThread> threads)
         {
-            var container = new List<List<ThreadProcessWithPeriodRange>>();
+            var container = new List<List<ThreadProcessWithDeadlineRange>>();
 
             foreach (var thread in threads)
             {
-                var periods = new List<ThreadProcessWithPeriodRange>();
+                var periods = new List<ThreadProcessWithDeadlineRange>();
 
                 var wholePeriod = 0;
                 while (wholePeriod <= _excutionTime)
                 {
-                    var from = periods.LastOrDefault() == null
+                    var deadlineFrom = periods.LastOrDefault() == null
                         ? 0
                         : periods.Last().PeriodTo + 1;
-                    var to = from + thread.Deadline;
+                    var deadlineTo = deadlineFrom + thread.Deadline; // last deadlineto + period? ew +1
                     var periodTo = periods.LastOrDefault() == null
                         ? thread.Period
                         : periods.Last().PeriodTo + thread.Period + 1;
 
-                    periods.Add(new ThreadProcessWithPeriodRange
+                    periods.Add(new ThreadProcessWithDeadlineRange
                     {
                         ThreadNo = thread.ThreadNo,
                         Capacity = thread.Capacity,
-                        DeadlineFrom = from,
-                        DeadlineTo = to,
+                        DeadlineFrom = deadlineFrom,
+                        DeadlineTo = deadlineTo,
                         PeriodTo = periodTo
                     });
                     wholePeriod = periodTo;
                 }
 
-                var threadPeriods = new List<ThreadProcessWithPeriodRange>(periods);
+                var threadPeriods = new List<ThreadProcessWithDeadlineRange>(periods);
                 container.Add(threadPeriods);
             }
 

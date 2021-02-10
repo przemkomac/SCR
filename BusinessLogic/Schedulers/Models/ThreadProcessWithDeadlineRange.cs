@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogic.Schedulers.Models
 {
-    public class ThreadProcessWithPeriodRange
+    public class ThreadProcessWithDeadlineRange
     {
         public int ThreadNo { get; set; }
         public int Capacity { get; set; }

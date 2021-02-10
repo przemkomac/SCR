@@ -14,9 +14,9 @@ namespace WebApp.ViewModelBuilders
                 ExecutionTime = 20,
                 PriorityParameters = new List<PriorityParameterViewModel>
                 {
-                    new PriorityParameterViewModel {Capacity = 1, Period = 2, Priority = 1},
-                    new PriorityParameterViewModel {Capacity = 1, Period = 4, Priority = 5},
-                    new PriorityParameterViewModel {Capacity = 1, Period = 2, Priority = 5},
+                    new PriorityParameterViewModel {Capacity = 1, Period = 3, Priority = 3},
+                    new PriorityParameterViewModel {Capacity = 1, Period = 9, Priority = 2},
+                    new PriorityParameterViewModel {Capacity = 2, Period = 5, Priority = 5},
                 }
             };
 
