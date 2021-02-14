@@ -7,7 +7,6 @@ using DataAccess;
 
 namespace BusinessLogic.Schedulers
 {
-    // todo
     public class DmsScheduler : BaseSchedule<DeadlineThread>
     {
         private readonly int _excutionTime;
@@ -26,7 +25,7 @@ namespace BusinessLogic.Schedulers
             var processesWithPeriodRange = AssingProcessesIntoPeriods(threads);
             LogStorage.AddLog($"Wyznaczono {processesWithPeriodRange.Count() - 1} wykonywań procesów");
 
-            var orderedProcessesWithPeriodRange = processesWithPeriodRange.OrderBy(t => t.DeadlineTo);
+            var orderedProcessesWithPeriodRange = OrderThreadsExecution(processesWithPeriodRange);
             LogStorage.AddLog("Posortowano procesy rosnącym terminem");
 
             var threadsAndIdlesExecutionSequence = DesignateExecutionOrder(orderedProcessesWithPeriodRange);
@@ -35,17 +34,20 @@ namespace BusinessLogic.Schedulers
             return threadsAndIdlesExecutionSequence;
         }
 
-        private IEnumerable<ThreadExecution> DesignateExecutionOrder(IEnumerable<ThreadProcessWithDeadlineRange> orderedProcessesWithPeriodRange)
+        private IEnumerable<ThreadExecution> DesignateExecutionOrder(IEnumerable<ThreadProcessWithPriorityDeadlineRange> orderedProcessesWithPeriodRange)
         {
             if (orderedProcessesWithPeriodRange == null || !orderedProcessesWithPeriodRange.Any())
                 throw new ArgumentException();
 
-            var queue = new Queue<ThreadProcessWithDeadlineRange>(orderedProcessesWithPeriodRange);
+            var queue = new Queue<ThreadProcessWithPriorityDeadlineRange>(orderedProcessesWithPeriodRange);
 
             var threadExecutionsSequence = new List<ThreadExecution>();
 
             for (var i = 0; i <= _excutionTime;)
             {
+                if (!queue.Any())
+                    break;
+
                 var thread = queue.Dequeue();
 
                 if (i == 0)
@@ -96,37 +98,76 @@ namespace BusinessLogic.Schedulers
             return threadExecutionsSequence;
         }
 
-        public IEnumerable<ThreadProcessWithDeadlineRange> AssingProcessesIntoPeriods(IEnumerable<DeadlineThread> threads)
+        private IEnumerable<ThreadProcessWithPriorityDeadlineRange> OrderThreadsExecution(IEnumerable<ThreadProcessWithPriorityDeadlineRange> processesWithPeriodRange)
         {
-            var container = new List<List<ThreadProcessWithDeadlineRange>>();
+            if (processesWithPeriodRange == null || !processesWithPeriodRange.Any())
+                throw new ArgumentException();
+
+            var processesWithPeriodRangeTempList = processesWithPeriodRange.OrderBy(t => t.DeadlineFrom).ToList();
+            var threadExecutionsSequence = new List<ThreadProcessWithPriorityDeadlineRange>();
+
+            for (var i = 0; i <= _excutionTime;)
+            {
+                var consideringToGet = processesWithPeriodRangeTempList.Where(t => Between(i, t.DeadlineFrom, t.DeadlineTo - t.Capacity));
+
+                if (!processesWithPeriodRangeTempList.Any())
+                    return threadExecutionsSequence;
+
+                if (!consideringToGet.Any())
+                {
+                    i++;
+                    continue;
+                }
+
+                var result = consideringToGet.OrderBy(t => t.BaseDeadline).First();
+
+                processesWithPeriodRangeTempList.Remove(result);
+
+                threadExecutionsSequence.Add(result);
+                i += result.Capacity;
+            }
+
+            return threadExecutionsSequence;
+
+            bool Between(int x, int a, int b) => (a <= x) && (x <= b);
+        }
+
+        public IEnumerable<ThreadProcessWithPriorityDeadlineRange> AssingProcessesIntoPeriods(IEnumerable<DeadlineThread> threads)
+        {
+            var container = new List<List<ThreadProcessWithPriorityDeadlineRange>>();
 
             foreach (var thread in threads)
             {
-                var periods = new List<ThreadProcessWithDeadlineRange>();
+                var periods = new List<ThreadProcessWithPriorityDeadlineRange>();
 
                 var wholePeriod = 0;
                 while (wholePeriod <= _excutionTime)
                 {
-                    var from = periods.LastOrDefault() == null
+                    var deadlineFrom = periods.LastOrDefault() == null
                         ? 0
-                        : periods.Last().PeriodTo + 1;
-                    var to = from + thread.Deadline;
+                        : periods.Last().PeriodTo;
+                    var deadlineTo = deadlineFrom + thread.Deadline + 1;
                     var periodTo = periods.LastOrDefault() == null
                         ? thread.Period
-                        : periods.Last().PeriodTo + thread.Period + 1;
+                        : periods.Last().PeriodTo + thread.Period;
 
-                    periods.Add(new ThreadProcessWithDeadlineRange
+                    if (periodTo <= _excutionTime)
                     {
-                        ThreadNo = thread.ThreadNo,
-                        Capacity = thread.Capacity,
-                        DeadlineFrom = from,
-                        DeadlineTo = to,
-                        PeriodTo = periodTo
-                    });
+                        periods.Add(new ThreadProcessWithPriorityDeadlineRange
+                        {
+                            ThreadNo = thread.ThreadNo,
+                            Capacity = thread.Capacity,
+                            DeadlineFrom = deadlineFrom,
+                            DeadlineTo = deadlineTo,
+                            PeriodTo = periodTo,
+                            BaseDeadline = thread.Deadline
+                        });
+                    }
+                        
                     wholePeriod = periodTo;
                 }
 
-                var threadPeriods = new List<ThreadProcessWithDeadlineRange>(periods);
+                var threadPeriods = new List<ThreadProcessWithPriorityDeadlineRange>(periods);
                 container.Add(threadPeriods);
             }
 

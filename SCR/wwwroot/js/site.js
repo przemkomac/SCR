@@ -35,7 +35,7 @@ function refreshLogsContainer() {
 }
 
 function initGraph(threads) {
-    var allowedColors = ["green", "red", "blue", "yellow", "black", "pink"];
+    var allowedColors = ["red", "green", "blue", "yellow", "black", "pink"];
     var whiteColor = "white";
 
     var options = {

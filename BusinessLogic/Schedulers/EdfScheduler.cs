@@ -45,6 +45,9 @@ namespace BusinessLogic.Schedulers
 
             for (var i = 0; i <= _excutionTime;)
             {
+                if (!queue.Any())
+                    break;
+
                 var thread = queue.Dequeue();
 
                 if (i == 0)
@@ -108,20 +111,24 @@ namespace BusinessLogic.Schedulers
                 {
                     var deadlineFrom = periods.LastOrDefault() == null
                         ? 0
-                        : periods.Last().PeriodTo + 1;
-                    var deadlineTo = deadlineFrom + thread.Deadline; // last deadlineto + period? ew +1
+                        : periods.Last().PeriodTo;
+                    var deadlineTo = deadlineFrom + thread.Deadline + 1; // last deadlineto + period? ew +1
                     var periodTo = periods.LastOrDefault() == null
                         ? thread.Period
-                        : periods.Last().PeriodTo + thread.Period + 1;
+                        : periods.Last().PeriodTo + thread.Period;
 
-                    periods.Add(new ThreadProcessWithDeadlineRange
+                    if (periodTo <= _excutionTime)
                     {
-                        ThreadNo = thread.ThreadNo,
-                        Capacity = thread.Capacity,
-                        DeadlineFrom = deadlineFrom,
-                        DeadlineTo = deadlineTo,
-                        PeriodTo = periodTo
-                    });
+                        periods.Add(new ThreadProcessWithDeadlineRange
+                        {
+                            ThreadNo = thread.ThreadNo,
+                            Capacity = thread.Capacity,
+                            DeadlineFrom = deadlineFrom,
+                            DeadlineTo = deadlineTo,
+                            PeriodTo = periodTo
+                        });
+                    }
+                        
                     wholePeriod = periodTo;
                 }
 

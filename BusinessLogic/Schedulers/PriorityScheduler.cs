@@ -45,6 +45,9 @@ namespace BusinessLogic.Schedulers
 
             for (var i = 0; i <= _excutionTime;)
             {
+                if (!queue.Any())
+                    break;
+
                 var thread = queue.Dequeue();
 
                 if (i == 0)
@@ -100,14 +103,14 @@ namespace BusinessLogic.Schedulers
             if (processesWithPriorityRange == null || !processesWithPriorityRange.Any())
                 throw new ArgumentException();
 
-            var processesWithPriorityRangeTemList = processesWithPriorityRange.OrderBy(t => t.PeriodFrom).ToList();
+            var processesWithPriorityRangeTempList = processesWithPriorityRange.OrderBy(t => t.PeriodFrom).ToList();
             var threadExecutionsSequence = new List<ThreadProcessWithPriorityRange>();
 
             for (var i = 0; i <= _excutionTime;)
             {
-                var consideringToGet = processesWithPriorityRangeTemList.Where(t => Between(i, t.PeriodFrom, t.PeriodTo - t.Capacity));
+                var consideringToGet = processesWithPriorityRangeTempList.Where(t => Between(i, t.PeriodFrom, t.PeriodTo - t.Capacity));
 
-                if (!processesWithPriorityRangeTemList.Any())
+                if (!processesWithPriorityRangeTempList.Any())
                     return threadExecutionsSequence;
 
                 if (!consideringToGet.Any())
@@ -118,7 +121,7 @@ namespace BusinessLogic.Schedulers
 
                 var result = consideringToGet.OrderByDescending(t => t.Priority).First();
 
-                processesWithPriorityRangeTemList.Remove(result);
+                processesWithPriorityRangeTempList.Remove(result);
 
                 threadExecutionsSequence.Add(result);
                 i += result.Capacity;
@@ -145,14 +148,18 @@ namespace BusinessLogic.Schedulers
                         : periods.Last().PeriodTo;
                     var periodTo = periodFrom + thread.Period;
 
-                    periods.Add(new ThreadProcessWithPriorityRange
+                    if (periodTo <= _excutionTime)
                     {
-                        ThreadNo = thread.ThreadNo,
-                        Capacity = thread.Capacity,
-                        PeriodFrom = periodFrom,
-                        PeriodTo = periodTo,
-                        Priority = thread.Priority
-                    });
+                        periods.Add(new ThreadProcessWithPriorityRange
+                        {
+                            ThreadNo = thread.ThreadNo,
+                            Capacity = thread.Capacity,
+                            PeriodFrom = periodFrom,
+                            PeriodTo = periodTo,
+                            Priority = thread.Priority
+                        });
+                    }
+
                     wholePeriod = periodTo;
                 }
 
