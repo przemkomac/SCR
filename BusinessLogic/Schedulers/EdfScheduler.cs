@@ -23,7 +23,7 @@ namespace BusinessLogic.Schedulers
             LogStorage.AddLog("Uruchomiono algorytm zarządcy typu EDF");
 
             var processesWithPeriodRange = AssingProcessesIntoPeriods(threads);
-            LogStorage.AddLog($"Wyznaczono {processesWithPeriodRange.Count() - 1} wykonywań procesów");
+            LogStorage.AddLog($"Wyznaczono {processesWithPeriodRange.Count()} wykonywań procesów");
 
             var orderedProcessesWithPeriodRange = processesWithPeriodRange.OrderBy(t => t.DeadlineTo);
             LogStorage.AddLog("Posortowano procesy rosnącym terminem");
